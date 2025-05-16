@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 36</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 36</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (1051-1080) con opzioni disposte casualmente
+        const questions = [
+            {
+                question: "Cos’è l’osteoporosi?",
+                options: ["Un’infezione ossea", "Una riduzione della densità ossea", "Un accumulo di liquido nelle ossa"],
+                correct: "Una riduzione della densità ossea",
+                explanation: "L’osteoporosi è una riduzione della densità ossea che aumenta il rischio di fratture, spesso dovuta a invecchiamento, menopausa o carenza di calcio. Non è un’infezione (osteomielite) né un accumulo di liquido. Gli OSS devono assistere nella mobilizzazione, garantire la sicurezza, promuovere una dieta ricca di calcio e segnalare sintomi come dolore osseo o cadute."
+            },
+            {
+                question: "Quale è un segno tipico dell’osteoporosi?",
+                options: ["Ittero", "Fratture patologiche", "Poliuria"],
+                correct: "Fratture patologiche",
+                explanation: "Le fratture patologiche, spesso a vertebre, anca o polso, sono un segno tipico dell’osteoporosi, dovute alla fragilità ossea. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare la mobilità, garantire ausili, osservare il dolore e segnalare all’infermiere sintomi come deformità o cadute."
+            },
+            {
+                question: "Cos’è l’artrite reumatoide?",
+                options: ["Un accumulo di liquido nelle articolazioni", "Una malattia autoimmune infiammatoria", "Un’infezione articolare"],
+                correct: "Una malattia autoimmune infiammatoria",
+                explanation: "L’artrite reumatoide è una malattia autoimmune infiammatoria che causa dolore, gonfiore e rigidità articolare, spesso simmetrica. Non è un’infezione (artrite settica) né un accumulo di liquido (versamento articolare). Gli OSS devono assistere nei movimenti, monitorare il dolore, garantire il comfort e segnalare sintomi come febbre o deformità articolari."
+            },
+            {
+                question: "Quale è un segno tipico dell’artrite reumatoide?",
+                options: ["Oliguria", "Rigidità mattutina", "Ittero"],
+                correct: "Rigidità mattutina",
+                explanation: "La rigidità mattutina, che dura oltre 30 minuti, è un segno tipico dell’artrite reumatoide, accompagnata da dolore e gonfiore articolare. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la funzionalità articolare, garantire ausili, monitorare il dolore e segnalare all’infermiere sintomi come febbre o arrossamento."
+            },
+            {
+                question: "Cos’è l’artrosi?",
+                options: ["Un’infezione articolare", "Una degenerazione della cartilagine articolare", "Un accumulo di liquido nelle articolazioni"],
+                correct: "Una degenerazione della cartilagine articolare",
+                explanation: "L’artrosi è una degenerazione della cartilagine articolare, spesso dovuta a invecchiamento o sovraccarico, che causa dolore, rigidità e limitazione dei movimenti. Non è un’infezione né un accumulo di liquido. Gli OSS devono assistere nella mobilizzazione, garantire il comfort, promuovere esercizi leggeri e segnalare sintomi come gonfiore o dolore severo."
+            },
+            {
+                question: "Quale è un segno tipico dell’artrosi?",
+                options: ["Poliuria", "Dolore articolare da carico", "Ittero"],
+                correct: "Dolore articolare da carico",
+                explanation: "Il dolore articolare da carico, che peggiora con il movimento e migliora a riposo, è un segno tipico dell’artrosi, accompagnato da rigidità. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la mobilità, garantire ausili, monitorare il dolore e segnalare all’infermiere sintomi come deformità o infiammazione."
+            },
+            {
+                question: "Cos’è la frattura di femore?",
+                options: ["Un accumulo di liquido nell’osso", "Una rottura dell’osso femorale", "Un’infezione ossea"],
+                correct: "Una rottura dell’osso femorale",
+                explanation: "La frattura di femore è una rottura dell’osso femorale, spesso dovuta a traumi o osteoporosi, comune negli anziani. Provoca dolore intenso, impotenza funzionale e accorciamento dell’arto. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire l’immobilizzazione, monitorare il dolore, assistere nei trasferimenti e segnalare sintomi come sanguinamento o ipotensione."
+            },
+            {
+                question: "Quale è un segno tipico della frattura di femore?",
+                options: ["Ittero", "Impotenza funzionale", "Oliguria"],
+                correct: "Impotenza funzionale",
+                explanation: "L’impotenza funzionale, ovvero l’incapacità di muovere l’arto, è un segno tipico della frattura di femore, accompagnata da dolore e possibile accorciamento. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la posizione dell’arto, garantire il comfort, monitorare i parametri vitali e segnalare all’infermiere sintomi come edema o febbre."
+            },
+            {
+                question: "Cos’è l’osteomielite?",
+                options: ["Un accumulo di liquido nelle ossa", "Un’infezione ossea", "Una degenerazione della cartilagine"],
+                correct: "Un’infezione ossea",
+                explanation: "L’osteomielite è un’infezione ossea, spesso causata da batteri (es. Staphylococcus aureus), che provoca dolore, febbre e gonfiore locale. Non è un accumulo di liquido né una degenerazione cartilaginea. Gli OSS devono monitorare la temperatura, garantire l’igiene, osservare il sito infetto e segnalare sintomi come arrossamento o secrezioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’osteomielite?",
+                options: ["Poliuria", "Dolore osseo con febbre", "Ittero"],
+                correct: "Dolore osseo con febbre",
+                explanation: "Il dolore osseo con febbre, spesso accompagnato da gonfiore e arrossamento, è un segno tipico dell’osteomielite, dovuta all’infezione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare il sito infetto, monitorare i parametri vitali, garantire l’igiene e segnalare all’infermiere sintomi come secrezioni o ipotensione."
+            },
+            {
+                question: "Cos’è la gotta?",
+                options: ["Un’infezione articolare", "Un accumulo di cristalli di urato nelle articolazioni", "Una degenerazione ossea"],
+                correct: "Un accumulo di cristalli di urato nelle articolazioni",
+                explanation: "La gotta è un accumulo di cristalli di urato nelle articolazioni, spesso causato da iperuricemia, che provoca dolore acuto, gonfiore e arrossamento, tipicamente all’alluce. Non è un’infezione né una degenerazione ossea. Gli OSS devono monitorare il dolore, garantire una dieta a basso contenuto di purine, assistere nei movimenti e segnalare sintomi come febbre o attacchi ricorrenti."
+            },
+            {
+                question: "Quale è un segno tipico della gotta?",
+                options: ["Ittero", "Dolore acuto all’alluce", "Oliguria"],
+                correct: "Dolore acuto all’alluce",
+                explanation: "Il dolore acuto all’alluce, spesso notturno e con gonfiore, è un segno tipico della gotta, dovuto ai cristalli di urato. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare l’articolazione, garantire il comfort, monitorare i sintomi e segnalare all’infermiere sintomi come arrossamento grave o febbre."
+            },
+            {
+                question: "Cos’è la scoliosi?",
+                options: ["Un’infezione della colonna vertebrale", "Una deviazione laterale della colonna vertebrale", "Un accumulo di liquido nella colonna"],
+                correct: "Una deviazione laterale della colonna vertebrale",
+                explanation: "La scoliosi è una deviazione laterale della colonna vertebrale, spesso idiopatica o congenita, che può causare asimmetria del tronco o dolore. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la postura, assistere nell’uso di corsetti, garantire il comfort e segnalare sintomi come dolore o difficoltà respiratorie."
+            },
+            {
+                question: "Quale è un segno tipico della scoliosi?",
+                options: ["Poliuria", "Asimmetria delle spalle", "Ittero"],
+                correct: "Asimmetria delle spalle",
+                explanation: "L’asimmetria delle spalle, spesso accompagnata da una curva spinale visibile, è un segno tipico della scoliosi, soprattutto negli adolescenti. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la postura, garantire l’uso corretto di ausili, monitorare il dolore e segnalare all’infermiere sintomi come progressione della curva o dispnea."
+            },
+            {
+                question: "Cos’è la lussazione articolare?",
+                options: ["Un accumulo di liquido nell’articolazione", "Uno spostamento delle superfici articolari", "Un’infezione articolare"],
+                correct: "Uno spostamento delle superfici articolari",
+                explanation: "La lussazione articolare è uno spostamento delle superfici articolari, spesso dovuto a traumi, che causa dolore, deformità e impotenza funzionale. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire l’immobilizzazione, monitorare il dolore, assistere nei trasferimenti e segnalare sintomi come edema o perdita di sensibilità."
+            },
+            {
+                question: "Quale è un segno tipico della lussazione di spalla?",
+                options: ["Ittero", "Deformità visibile", "Oliguria"],
+                correct: "Deformità visibile",
+                explanation: "La deformità visibile, spesso accompagnata da dolore intenso e impotenza funzionale, è un segno tipico della lussazione di spalla. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare l’articolazione, garantire l’immobilizzazione, monitorare i parametri vitali e segnalare all’infermiere sintomi come formicolio o pallore."
+            },
+            {
+                question: "Cos’è la distorsione articolare?",
+                options: ["Un’infezione dell’articolazione", "Una lesione dei legamenti articolari", "Un accumulo di liquido nell’articolazione"],
+                correct: "Una lesione dei legamenti articolari",
+                explanation: "La distorsione articolare è una lesione dei legamenti articolari, spesso dovuta a movimenti improvvisi, che causa dolore, gonfiore e limitazione funzionale. Non è un’infezione né un accumulo di liquido. Gli OSS devono applicare ghiaccio, garantire l’immobilizzazione, monitorare il gonfiore e segnalare sintomi come instabilità o dolore severo."
+            },
+            {
+                question: "Quale è un segno tipico della distorsione di caviglia?",
+                options: ["Poliuria", "Gonfiore e dolore locale", "Ittero"],
+                correct: "Gonfiore e dolore locale",
+                explanation: "Il gonfiore e il dolore locale, spesso accompagnati da ematoma, sono segni tipici della distorsione di caviglia, dovuta alla lesione legamentosa. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare l’articolazione, applicare bendaggi, monitorare il dolore e segnalare all’infermiere sintomi come instabilità o febbre."
+            },
+            {
+                question: "Cos’è la protesi d’anca?",
+                options: ["Un accumulo di liquido nell’anca", "Un dispositivo per sostituire l’articolazione dell’anca", "Un’infezione dell’anca"],
+                correct: "Un dispositivo per sostituire l’articolazione dell’anca",
+                explanation: "La protesi d’anca è un dispositivo chirurgico utilizzato per sostituire l’articolazione dell’anca danneggiata, spesso per artrosi o fratture. Non è un’infezione né un accumulo di liquido. Gli OSS devono assistere nella mobilizzazione, monitorare il sito chirurgico, garantire l’igiene e segnalare sintomi come arrossamento o lussazione."
+            },
+            {
+                question: "Quale è una complicanza tipica post-protesi d’anca?",
+                options: ["Ittero", "Infezione del sito chirurgico", "Oliguria"],
+                correct: "Infezione del sito chirurgico",
+                explanation: "L’infezione del sito chirurgico, accompagnata da arrossamento, febbre o secrezioni, è una complicanza tipica post-protesi d’anca. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono ispezionare il sito chirurgico, monitorare la temperatura, garantire l’igiene e segnalare all’infermiere sintomi come dolore persistente o febbre."
+            },
+            {
+                question: "Cos’è la protesi di ginocchio?",
+                options: ["Un’infezione dell’articolazione del ginocchio", "Un dispositivo per sostituire l’articolazione del ginocchio", "Un accumulo di liquido nel ginocchio"],
+                correct: "Un dispositivo per sostituire l’articolazione del ginocchio",
+                explanation: "La protesi di ginocchio è un dispositivo chirurgico utilizzato per sostituire l’articolazione del ginocchio danneggiata, spesso per artrosi o traumi. Non è un’infezione né un accumulo di liquido. Gli OSS devono assistere nella mobilizzazione, monitorare il sito chirurgico, garantire l’igiene e segnalare sintomi come gonfiore o instabilità."
+            },
+            {
+                question: "Quale è una complicanza tipica post-protesi di ginocchio?",
+                options: ["Poliuria", "Rigidità articolare", "Ittero"],
+                correct: "Rigidità articolare",
+                explanation: "La rigidità articolare, dovuta a formazione di tessuto cicatriziale o scarsa riabilitazione, è una complicanza tipica post-protesi di ginocchio. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la mobilità, assistere negli esercizi, monitorare il dolore e segnalare all’infermiere sintomi come infezioni o limitazione funzionale."
+            },
+            {
+                question: "Cos’è la sindrome del tunnel carpale?",
+                options: ["Un accumulo di liquido nel polso", "Una compressione del nervo mediano nel polso", "Un’infezione del polso"],
+                correct: "Una compressione del nervo mediano nel polso",
+                explanation: "La sindrome del tunnel carpale è una compressione del nervo mediano nel polso, che causa formicolio, dolore e debolezza alla mano. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i sintomi, assistere nell’uso di tutori, garantire il comfort e segnalare sintomi come perdita di forza o dolore notturno."
+            },
+            {
+                question: "Quale è un segno tipico della sindrome del tunnel carpale?",
+                options: ["Ittero", "Formicolio alle dita", "Oliguria"],
+                correct: "Formicolio alle dita",
+                explanation: "Il formicolio alle dita, soprattutto pollice, indice e medio, è un segno tipico della sindrome del tunnel carpale, accompagnato da dolore o debolezza. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi, garantire il riposo del polso, monitorare la funzionalità e segnalare all’infermiere sintomi come atrofia muscolare o dolore severo."
+            },
+            {
+                question: "Cos’è la tendinite?",
+                options: ["Un accumulo di liquido nel tendine", "Un’infiammazione del tendine", "Una frattura ossea"],
+                correct: "Un’infiammazione del tendine",
+                explanation: "La tendinite è un’infiammazione del tendine, spesso dovuta a sovraccarico o microtraumi, che causa dolore e limitazione funzionale. Non è un accumulo di liquido né una frattura. Gli OSS devono applicare ghiaccio, garantire il riposo, monitorare il dolore e segnalare sintomi come gonfiore o febbre."
+            },
+            {
+                question: "Quale è un segno tipico della tendinite di Achille?",
+                options: ["Poliuria", "Dolore al tallone", "Ittero"],
+                correct: "Dolore al tallone",
+                explanation: "Il dolore al tallone, spesso peggiorato dal movimento, è un segno tipico della tendinite di Achille, accompagnato da rigidità o gonfiore. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare il movimento, applicare bendaggi, monitorare il dolore e segnalare all’infermiere sintomi come arrossamento o instabilità."
+            },
+            {
+                question: "Cos’è la borsite?",
+                options: ["Un’infezione ossea", "Un’infiammazione della borsa sinoviale", "Un accumulo di liquido nell’osso"],
+                correct: "Un’infiammazione della borsa sinoviale",
+                explanation: "La borsite è un’infiammazione della borsa sinoviale, spesso dovuta a traumi o sovraccarico, che causa dolore, gonfiore e limitazione dei movimenti. Non è un’infezione ossea né un accumulo di liquido. Gli OSS devono applicare ghiaccio, garantire il riposo, monitorare il gonfiore e segnalare sintomi come febbre o arrossamento."
+            },
+            {
+                question: "Quale è un segno tipico della borsite di spalla?",
+                options: ["Ittero", "Dolore con movimento del braccio", "Oliguria"],
+                correct: "Dolore con movimento del braccio",
+                explanation: "Il dolore con movimento del braccio, spesso accompagnato da gonfiore locale, è un segno tipico della borsite di spalla, dovuta all’infiammazione. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la mobilità, garantire il comfort, monitorare il dolore e segnalare all’infermiere sintomi come rigidità o febbre."
+            },
+            {
+                question: "Cos’è l’amputazione di un arto?",
+                options: ["Un accumulo di liquido nell’arto", "La rimozione chirurgica di un arto", "Un’infezione dell’arto"],
+                correct: "La rimozione chirurgica di un arto",
+                explanation: "L’amputazione di un arto è la rimozione chirurgica di un arto, spesso necessaria per traumi, infezioni o ischemia. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare il moncone, garantire l’igiene, assistere nella riabilitazione e segnalare sintomi come infezioni o dolore fantasma."
+            },
+            {
+                question: "Quale è una complicanza tipica post-amputazione?",
+                options: ["Poliuria", "Infezione del moncone", "Ittero"],
+                correct: "Infezione del moncone",
+                explanation: "L’infezione del moncone, accompagnata da arrossamento, secrezioni o febbre, è una complicanza tipica post-amputazione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono ispezionare il moncone, garantire l’igiene, monitorare la temperatura e segnalare all’infermiere sintomi come secrezioni o dolore severo."
+            },
+            {
+                question: "Cos’è la riabilitazione ortopedica?",
+                options: ["Un’infezione articolare", "Un processo per ripristinare la funzionalità muscolo-scheletrica", "Un accumulo di liquido nelle articolazioni"],
+                correct: "Un processo per ripristinare la funzionalità muscolo-scheletrica",
+                explanation: "La riabilitazione ortopedica è un processo per ripristinare la funzionalità muscolo-scheletrica dopo traumi, interventi o patologie, tramite esercizi e ausili. Non è un’infezione né un accumulo di liquido. Gli OSS devono assistere negli esercizi, garantire la sicurezza, monitorare i progressi e segnalare sintomi come dolore o limitazione funzionale."
+            },
+            {
+                question: "Quale è un obiettivo tipico della riabilitazione ortopedica?",
+                options: ["Ittero", "Recupero della mobilità articolare", "Oliguria"],
+                correct: "Recupero della mobilità articolare",
+                explanation: "Il recupero della mobilità articolare, spesso accompagnato da rinforzo muscolare, è un obiettivo tipico della riabilitazione ortopedica. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i progressi, assistere negli esercizi, monitorare il dolore e segnalare all’infermiere sintomi come gonfiore o rigidità persistente."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
